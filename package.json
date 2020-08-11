@@ -25,6 +25,7 @@
         "@types/node": "^14.0.24"
     },
     "dependencies": {
+        "fire-fs": "^0.2.4",
         "fire-path": "^0.1.9",
         "globby": "^11.0.1",
         "lessc": "^1.0.2",
