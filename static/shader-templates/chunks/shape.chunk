@@ -1,0 +1,40 @@
+
+
+CCProgram shader_graph_shape %{
+
+float randomRange (vec2 seed, float minv, float maxv) {
+    float randomno = fract(sin(dot(seed, vec2(12.9898, 78.233)))*43758.5453);
+    return mix(minv, maxv, randomno);
+}
+
+float ellipse (vec2 uv, float width, float height) {
+    #if USE_standard_derivatives
+        float d = length((uv * 2. - 1.) / vec2(width, height));
+        return saturate((1. - d) / fwidth(d));
+    #else
+        return 1.;
+    #endif
+}
+
+float rect (vec2 uv, float width, float height) {
+    #if USE_standard_derivatives
+        vec2 d = abs(uv * 2. - 1.) - vec2(width, width);
+        d = 1. - d / fwidth(d);
+        return saturate(min(d.x, d.y));
+    #else
+        return 1.;
+    #endif
+}
+
+float reoundRect (vec2 uv, float width, float height, float radius) {
+    #if USE_standard_derivatives
+        radius = max(min(min(abs(radius * 2.), abs(width)), abs(width)), 1e-5);
+        vec2 uv = abs(uv * 2. - 1.) - vec2(width, width) + radius;
+        float d = length(max(0., uv)) / radius;
+        return saturate((1. - d) / fwidth(d));
+    #else
+        return 1.;
+    #endif
+}
+
+}%

@@ -1,0 +1,160 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: pbr-vs:vert
+      frag: pbr-fs:frag
+      properties: &props
+        {{properties_mtl}}
+  - name: transparent
+    passes:
+    - vert: pbr-vs:vert
+      frag: pbr-fs:frag
+      depthStencilState: &d1
+        depthTest: true
+        depthWrite: false
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: *props
+}%
+
+{{chunks}}
+
+CCProgram properties %{
+  uniform ShaderGraph_Properties {
+    {{properties}}
+  };
+
+  {{properties_sampler}}
+}%
+
+CCProgram pbr-vs %{
+  #if USE_standard_derivatives
+    #extension GL_OES_standard_derivatives : enable
+  #endif
+
+  precision highp float;
+  #include <input-standard>
+  #include <cc-global>
+  #include <cc-local-batch>
+  #include <properties>
+
+  in vec3 a_color;
+  out vec3 v_color;
+
+  in vec2 a_texCoord;
+  out vec2 v_uv;
+  in vec2 a_texCoord1;
+  out vec2 v_uv1;
+  #if USE_LIGHTMAP && !USE_BATCHING && !USE_INSTANCING
+    out vec2 v_luv;
+  #endif
+
+  {{vs_chunks}}
+  {{vs_varing_define}}
+
+  vec4 vert () {
+    StandardVertInput In;
+    CCVertInput(In);
+
+    mat4 matWorld, matWorldIT;
+    CCGetWorldMatrixFull(matWorld, matWorldIT);
+
+    vec4 position = In.position;
+    vec3 normal = In.normal;
+    vec4 tangent = In.tangent;
+    
+    vec4 worldPosition = matWorld * position;
+    vec4 viewPosition = cc_matView * worldPosition;
+
+    {{vs_varing}}
+    {{vs}}
+
+    position = {{slot_Vertex_Position = position}};
+    normal   = {{slot_Vertex_Normal = normal}};
+    tangent  = {{slot_Vertex_Tangent = tangent}};
+
+    v_uv = a_texCoord;
+    v_uv1 = a_texCoord1;
+    v_color = a_color;
+
+    #if USE_LIGHTMAP && HAS_SECOND_UV && !USE_BATCHING && !USE_INSTANCING
+      v_luv = cc_lightingMapUVParam.xy + a_texCoord1 * cc_lightingMapUVParam.zw;
+    #endif
+
+    return cc_matProj * viewPosition;
+  }
+}%
+
+CCProgram pbr-fs %{
+  #if USE_standard_derivatives
+    #extension GL_OES_standard_derivatives : enable
+  #endif
+  
+  precision highp float;
+  #include <cc-global>
+  #include <shading-standard>
+  #include <output-standard>
+  #include <gamma>
+  #include <properties>
+  
+  {{fs_chunks}}
+  {{fs_varing_define}}
+
+  in vec2 v_uv;
+  in vec2 v_uv1;
+
+  #if USE_LIGHTMAP
+    in vec2 v_luv;
+    #pragma builtin(local)
+    layout(binding = 30) uniform sampler2D cc_lightingMap;
+  #endif
+
+  void surf (out StandardSurface s) {
+    {{fs_varing}}
+    {{fs}}
+
+    s.albedo.a  = {{slot_Alpha = 1.}};
+    if (s.albedo.a <= {{slot_AlphaClipThreshold = 0.}}) {
+      discard;
+    }
+
+    s.albedo.rgb = {{slot_Albedo = vec3(1.)}};
+    s.normal    = {{slot_Normal = worldNormal}};
+    s.position  = worldPosition.xyz;
+    s.emissive  = {{slot_Emission = vec3(0.)}};
+    s.metallic  = {{slot_Metallic = 0.6}};
+    s.roughness = clamp(1. - {{slot_Smoothness = 0.4}}, 0.04, 1.0);
+    s.occlusion = clamp({{slot_Occlusion = 1.}}, 0., 0.96);
+  }
+
+  vec4 frag () {
+    StandardSurface s; surf(s);
+    vec4 color = CCStandardShading(s);
+
+    #if USE_LIGHTMAP && !USE_BATCHING && !USE_INSTANCING
+      vec4 lighting = texture(cc_lightingMap, v_luv);
+
+      float fAmb = 0.5 - s.normal.y * 0.5;
+      vec3 ambDiff = mix(cc_ambientSky.rgb, cc_ambientGround.rgb, fAmb) * cc_ambientSky.w;
+
+      vec3 finalColor = (ambDiff.rgb * s.albedo.rgb);
+      finalColor += lighting.rgb *  s.albedo.rgb;
+      finalColor = finalColor * s.occlusion;
+      finalColor += s.emissive;
+
+      color.rgb = lighting.a * finalColor + (1.0 - lighting.a) * color.rgb;
+    #endif
+
+    #if USE_TONEMAP
+      return CCFragOutput(color);
+    #else
+      return color;
+    #endif
+  }
+}%

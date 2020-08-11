@@ -1,0 +1,128 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: unlit-vs:vert
+      frag: unlit-fs:frag
+      properties: &props
+        {{properties_mtl}}
+  - name: transparent
+    passes:
+    - vert: unlit-vs:vert
+      frag: unlit-fs:frag
+      depthStencilState: &d1
+        depthTest: true
+        depthWrite: false
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: *props
+  - name: add
+    passes:
+    - vert: unlit-vs:vert
+      frag: unlit-fs:frag
+      rasterizerState: &r1 { cullMode: none }
+      depthStencilState: *d1
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one
+      properties: *props
+  - name: alpha-blend
+    passes:
+    - vert: unlit-vs:vert
+      frag: unlit-fs:frag
+      rasterizerState: *r1
+      depthStencilState: *d1
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: *props
+}%
+
+{{chunks}}
+
+CCProgram properties %{
+  uniform ShaderGraph_Properties {
+    {{properties}}
+  };
+
+  {{properties_sampler}}
+}%
+
+CCProgram unlit-vs %{
+  #if USE_standard_derivatives
+    #extension GL_OES_standard_derivatives : enable
+  #endif
+
+  precision highp float;
+  #include <input>
+  #include <cc-global>
+  #include <cc-local-batch>
+  #include <properties>
+
+  {{vs_chunks}}
+  {{vs_varing_define}}
+
+  in vec2 a_texCoord;
+  out vec2 v_uv;
+
+  vec4 vert () {
+    vec4 position;
+    CCVertInput(position);
+
+    mat4 matWorld;
+    CCGetWorldMatrix(matWorld);
+
+    {{vs}}
+
+    position = {{slot_Vertex_Position = position}};
+
+    vec4 worldPosition = matWorld * position;
+    vec4 viewPosition = cc_matView * worldPosition;
+
+    {{vs_varing}}
+
+    v_uv = a_texCoord;
+
+    return cc_matProj * viewPosition;
+  }
+}%
+
+CCProgram unlit-fs %{
+  #if USE_standard_derivatives
+    #extension GL_OES_standard_derivatives : enable
+  #endif
+  
+  precision highp float;
+  #include <output>
+  #include <properties>
+  
+  {{fs_chunks}}
+  {{fs_varing_define}}
+  
+  in vec2 v_uv;
+
+  vec4 frag () {
+    vec4 o = vec4(1.);
+
+    {{fs_varing}}
+    {{fs}}
+
+    o.rgb *= {{slot_Color = vec3(1.)}};
+    o.a *= {{slot_Alpha = 1.}};
+
+    return CCFragOutput(o);
+  }
+}%

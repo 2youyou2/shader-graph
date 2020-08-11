@@ -1,0 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const base_1 = require("../../base");
+class SubGraphOutputNode extends base_1.ShaderNode {
+}
+exports.default = SubGraphOutputNode;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiU3ViR3JhcGhPdXRwdXROb2RlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vc291cmNlL3BhbmVsL29wZXJhdGlvbi9ub2Rlcy9zdWJncmFwaC9TdWJHcmFwaE91dHB1dE5vZGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSxxQ0FBd0M7QUFFeEMsTUFBcUIsa0JBQW1CLFNBQVEsaUJBQVU7Q0FDekQ7QUFERCxxQ0FDQyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IFNoYWRlck5vZGUgfSBmcm9tIFwiLi4vLi4vYmFzZVwiO1xyXG5cclxuZXhwb3J0IGRlZmF1bHQgY2xhc3MgU3ViR3JhcGhPdXRwdXROb2RlIGV4dGVuZHMgU2hhZGVyTm9kZSB7XHJcbn1cclxuIl19

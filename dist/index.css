@@ -1,0 +1,43 @@
+.shadergraph {
+  height: 100%;
+  flex-direction: column;
+}
+.shadergraph .directory {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.shadergraph .directory-item {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+}
+.shadergraph .directory-item-sub {
+  display: flex;
+  flex-direction: row;
+}
+.shadergraph .directory-item-sub .name {
+  width: 30px;
+}
+.shadergraph ui-file {
+  flex: 1;
+}
+.shadergraph .add {
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+}
+.shadergraph .generate {
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+}
+.shadergraph .button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
+  flex-direction: column;
+}

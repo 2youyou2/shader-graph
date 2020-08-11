@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "types": [
+      "node"
+    ],
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "rootDir": "./source",
+    "strict": true,
+    "allowJs": true,
+    
+    "lib": [
+      "dom",
+      "es7"
+    ],
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": false
+  },
+  "exclude": [
+    "./dist/**/*"
+  ],
+  "include": [
+    "./source"
+  ]
+}

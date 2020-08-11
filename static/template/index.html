@@ -1,0 +1,40 @@
+<div class="shadergraph">
+    <div v-for="d in directories">
+        <div class="directory">
+            <div class="directory-item">
+                <div class="directory-item-sub">
+                    <div class="name">src : </div>
+                    <ui-file name="src" type="directory"
+                        title="src"
+                        :value="d.src"
+                        @change="d.src = $event.target.value"
+                        @confirm="saveEdit"
+                    ></ui-file>
+                </div>
+                <div class="directory-item-sub">
+                    <div class="name">dst : </div>
+                    <ui-file name="dst" type="directory"
+                        title="dst"
+                        :value="d.dst"
+                        @change="d.dst = $event.target.value"
+                        @confirm="saveEdit"
+                    ></ui-file>
+                </div>
+            </div>
+            <div class="button">
+                <ui-button @click="remove(d)">
+                    X
+                </ui-button>
+                <ui-checkbox 
+                    :value="d.enabled" 
+                    @change="d.enabled = $event.target.value"
+                    @confirm="saveEdit"
+                >
+                </ui-checkbox>
+            </div>
+        </div>
+        
+    </div>
+    <ui-button @click="onAdd" class="add">add</ui-button>
+    <ui-button @click="onGenerate" class="generate">generate</ui-button>
+</div>
