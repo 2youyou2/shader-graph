@@ -1,7 +1,8 @@
 # **Shader Graph Tool**
 
 **Shader Graph Tool** (Based on Cocos Creator 3D v1.1.1) can import **Unity Shader Graph** files as Cocos Creator Effect files.
-**Unity Shader Graph** has more than 200 Shader Nodes, we had implemented about 100 Shader Nodes of them. Still working hard on it.  
+
+**Note** : **Unity Shader Graph** has more than 200 Shader Nodes, we had implemented about 100 Shader Nodes of them. Still working hard on it.  
 
 # Install
 
