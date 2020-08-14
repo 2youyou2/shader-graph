@@ -1,4 +1,6 @@
-# shader-graph
+# **Shader Graph Tool**
+
+**Shader Graph Tool** (Based on Cocos Creator 3D v1.1.1) can import Unity Shader Graph files as Cocos Creator Effect files.
 
 # Install
 
