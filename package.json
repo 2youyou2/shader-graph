@@ -1,11 +1,11 @@
 {
-  "name": "shader-grapgh",
+  "name": "shader-graph",
   "version": "0.0.1",
   "author": "youyou",
   "contributions": {
     "menu": [
       {
-        "path": "shader-grapgh",
+        "path": "shader-graph",
         "label": "open",
         "message": "open"
       }
@@ -26,7 +26,7 @@
   "main": "./dist/browser.js",
   "panels": {
     "default": {
-      "title": "shader-grapgh",
+      "title": "shader-graph",
       "icon": "./static/icon.png",
       "main": "./dist/panel/index.js",
       "min-width": 400,

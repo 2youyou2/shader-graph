@@ -13,7 +13,7 @@ import path from 'path';
  */
 exports.methods = {
     async open() {
-        Editor.Panel.open('shader-grapgh');
+        Editor.Panel.open('shader-graph');
     },
 
     async convert (src: string, dst: string, baseDir: string) {

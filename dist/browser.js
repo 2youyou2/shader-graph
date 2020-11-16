@@ -25,7 +25,7 @@ const path_1 = __importDefault(require("path"));
 exports.methods = {
     open() {
         return __awaiter(this, void 0, void 0, function* () {
-            editor_exports_1.Editor.Panel.open('shader-grapgh');
+            editor_exports_1.Editor.Panel.open('shader-graph');
         });
     },
     convert(src, dst, baseDir) {
