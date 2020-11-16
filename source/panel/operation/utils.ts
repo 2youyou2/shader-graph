@@ -32,7 +32,7 @@ let ValueElements = {
     mat4: ['e00', 'e01', 'e02', 'e03']
 }
 
-export function getValueElement (value: object | number, index: number): number {
+export function getValueElement (value: any | number, index: number): number {
     if (typeof value === 'number') {
         return value;
     }

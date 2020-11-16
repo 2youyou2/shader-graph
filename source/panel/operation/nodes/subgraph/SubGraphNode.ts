@@ -97,10 +97,10 @@ export default class SubGraphNode extends ShaderNode {
                 }
                 else {
                     propertySlot.connectSlots.forEach(inputSlotInSubGraph => {
-                        inputSlotInSubGraph.connectSlot = inputSlot;
+                        inputSlotInSubGraph.connectSlot = inputSlot!;
                         // inputSlot.connectSlots.push(inputSlotInSubGraph);
 
-                        if (inputSlot.node) {
+                        if (inputSlot!.node) {
                             inputSlotInSubGraph.node?.addDependency(this);
                             //@ts-ignore
                             this.setPriority(inputSlotInSubGraph.node.priority + 1);

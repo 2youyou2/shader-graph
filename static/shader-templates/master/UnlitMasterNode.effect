@@ -75,7 +75,6 @@ CCProgram unlit-vs %{
   {{vs_chunks}}
   {{vs_varing_define}}
 
-  in vec2 a_texCoord;
   out vec2 v_uv;
 
   vec4 vert () {

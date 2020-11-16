@@ -9,9 +9,9 @@ Vue.config.devtools = false;
 
 let panel: any = null;
 let $vm: any;
-export const style = readFileSync(join(__dirname, '../index.css'));
+export const style = readFileSync(join(__dirname, '../index.css'), 'utf8');
 
-export const template = readFileSync(join(__dirname, '../../static/template/index.html'));
+export const template = readFileSync(join(__dirname, '../../static/template/index.html'), 'utf8');
 
 export const $ = {
     shadergraph: '.shadergraph',
@@ -30,7 +30,7 @@ export async function ready(tab: string, params: any) {
 
     const manager = require('./components/manager');
     manager.el = panel.$.shadergraph;
-    manager.init();
+    await manager.init();
    
     $vm = new Vue(manager);
 }

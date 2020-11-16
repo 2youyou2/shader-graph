@@ -1,35 +1,49 @@
 {
-    "name": "shader-grapgh",
-    "version": "0.0.1",
-    "author": "youyou",
-    "menu": {
-        "shader-grapgh": {
-            "message": "open",
-            "icon": "./static/icon.png"
-        }
-    },
-    "main": "./dist/browser.js",
-    "panel": {
-        "title": "shader-grapgh",
-        "icon": "./static/icon.png",
-        "main": "./dist/panel/index.js",
-        "min-width": 400,
-        "min-height": 400,
-        "width": 400,
-        "height": 600
-    },
-    "scripts": {
-        "build-style": "lessc static/style/index.less > dist/index.css"
-    },
-    "devDependencies": {
-        "@types/node": "^14.0.24"
-    },
-    "dependencies": {
-        "fire-fs": "^0.2.4",
-        "fire-path": "^0.1.9",
-        "globby": "^11.0.1",
-        "lessc": "^1.0.2",
-        "typescript": "^3.9.7",
-        "vue": "^2.6.11"
+  "name": "shader-grapgh",
+  "version": "0.0.1",
+  "author": "youyou",
+  "contributions": {
+    "menu": [
+      {
+        "path": "shader-grapgh",
+        "label": "open",
+        "message": "open"
+      }
+    ],
+    "messages": {
+      "open": {
+        "methods": [
+          "open"
+        ]
+      }
     }
+  },
+  "main": "./dist/browser.js",
+  "panels": {
+    "default": {
+      "title": "shader-grapgh",
+      "icon": "./static/icon.png",
+      "main": "./dist/panel/index.js",
+      "min-width": 400,
+      "min-height": 400,
+      "width": 400,
+      "height": 600
+    }
+  },
+  "scripts": {
+    "build-style": "lessc static/style/index.less > dist/index.css",
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.24"
+  },
+  "dependencies": {
+    "fire-fs": "^0.2.4",
+    "fire-path": "^0.1.9",
+    "globby": "^11.0.1",
+    "lessc": "^1.0.2",
+    "typescript": "^3.9.7",
+    "vue": "^2.6.11"
+  }
 }

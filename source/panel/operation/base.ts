@@ -1,6 +1,7 @@
 import { getJsonObject, getFloatString, getValueElement, getValueElementStr, getValueConcretePrecision, getPrecisionName } from "./utils";
 import { relative } from "path";
 import { ConcretePrecisionType, TextureConcretePrecision } from "./type";
+import PropertyNode from './nodes/input/PropertyNode';
 
 export class ShaderPropery {
     type = {};
@@ -199,7 +200,7 @@ export class ShaderSlot {
 
     get varName () {
         if (this.node?.isPropertyNode) {
-            return this.node.property.name;
+            return (this.node as PropertyNode).property!.name;
         }
         return 'var_' + this.globalID;
     }
@@ -341,7 +342,7 @@ export class ShaderSlot {
             let value = this.data.m_Value;
             if (value === undefined) {
                 if (this.node?.isPropertyNode) {
-                    value = this.node.property.data.m_Value;
+                    value = (this.node as PropertyNode).property!.data.m_Value;
                 }
             }
             if (value === undefined) {

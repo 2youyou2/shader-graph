@@ -2,15 +2,20 @@
 import path from 'fire-path';
 import fs from 'fire-fs';
 import ShaderGraph from '../operation/shadergraph';
+import { Editor } from '../../utils/editor-exports';
 
 const globby = require('globby');
-const profile = Editor.Profile.load('local://packages/shader-graph.json');
 
-const electron = require('electron')
-const projectPath = electron.remote.getGlobal('Editor').Project.path;
+const projectPath = Editor.Project.path;
+
+interface DirectortyPair {
+    enabled: boolean,
+    src: string,
+    dst: string,
+}
 
 export const data = {
-    directories: []
+    directories: [] as DirectortyPair[]
 };
 
 export const watch = {};
@@ -35,20 +40,13 @@ function convertToProjectAbsolute (relativePath: string) {
     return relativePath;
 }
 
-export function init () {
-    const storage = profile.get('shader-graph');
-    if (storage) {
-        for (let key in storage) {
-            data[key] = storage[key];
-        }
-    }
+export async function init () {
+    data.directories = await Editor.Profile.getConfig('shader-graph', 'directories') || [];
 
-    if (data.directories) {
-        data.directories.forEach(d => {
-            d.src = convertToProjectAbsolute(d.src);
-            d.dst = convertToProjectAbsolute(d.dst);
-        })
-    }
+    data.directories.forEach(d => {
+        d.src = convertToProjectAbsolute(d.src);
+        d.dst = convertToProjectAbsolute(d.dst);
+    })
 }
 
 export const methods = {
@@ -63,10 +61,7 @@ export const methods = {
             return d;
         });
 
-        profile.set('shader-graph', {
-            directories: directories,
-        });
-        profile.save();
+        Editor.Profile.setConfig('shader-graph', 'directories', directories);
     },
 
     onGenerate () {
@@ -91,7 +86,7 @@ export const methods = {
 
                 relPath = path.relative(projectPath, dstPath);
                 let url = 'db://' + relPath;
-                Editor.Ipc.sendToAll('refresh-asset', url)
+                Editor.Message.request('asset-db', 'refresh-asset', url);
             })
         })
     },

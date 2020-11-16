@@ -44,10 +44,11 @@ CCProgram pbr-vs %{
   #include <cc-local-batch>
   #include <properties>
 
+  #include <cc-shadow-map-vs>
+
   in vec3 a_color;
   out vec3 v_color;
 
-  in vec2 a_texCoord;
   out vec2 v_uv;
   in vec2 a_texCoord1;
   out vec2 v_uv1;
@@ -86,6 +87,8 @@ CCProgram pbr-vs %{
     #if USE_LIGHTMAP && HAS_SECOND_UV && !USE_BATCHING && !USE_INSTANCING
       v_luv = cc_lightingMapUVParam.xy + a_texCoord1 * cc_lightingMapUVParam.zw;
     #endif
+
+    CCPassShadowParams(worldPosition);
 
     return cc_matProj * viewPosition;
   }

@@ -28,13 +28,13 @@ export default class ShaderGraph {
             if (node instanceof PropertyNode) {
                 node.searchProperties(properties);
                 
-                let propertyNode = propertyNodeMap.get(node.property);
+                let propertyNode = propertyNodeMap.get(node.property!);
                 if (propertyNode) {
                     nodeMap.set(node.uuid, propertyNode);
                     return propertyNode;
                 }
 
-                propertyNodeMap.set(node.property, node);
+                propertyNodeMap.set(node.property!, node);
 
             }
 

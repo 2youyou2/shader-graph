@@ -104,7 +104,7 @@ export default class MasterNode extends ShaderNode {
             let z = isColor ? value.b : value.z;
             let w = isColor ? value.a : value.w;
 
-            let concretePrecision = p.node?.outputSlots[0].concretePrecision;
+            let concretePrecision = p.node!.outputSlots[0].concretePrecision;
 
             if (concretePrecision === 1) {
                 precision = 'float';
