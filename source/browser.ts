@@ -1,5 +1,9 @@
 import { Editor } from './utils/editor-exports';
 
+import ShaderGraph from './panel/operation/shadergraph';
+import fs from 'fire-fs';
+import path from 'path';
+
 
 /**
  * 插件定义的方法
@@ -11,6 +15,17 @@ exports.methods = {
     async open() {
         Editor.Panel.open('shader-grapgh');
     },
+
+    async convert (src: string, dst: string, baseDir: string) {
+        ShaderGraph.subgraphPath = baseDir;
+        let content = ShaderGraph.decode(src);
+        fs.ensureDirSync(path.dirname(dst))
+        fs.writeFileSync(dst, content);
+
+        let relPath = path.relative(Editor.Project.path, dst);
+        let url = 'db://' + relPath;
+        await Editor.Message.request('asset-db', 'refresh-asset', url);
+    }
 };
 
 /**
