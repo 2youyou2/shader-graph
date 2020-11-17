@@ -17,6 +17,18 @@ exports.methods = {
     },
 
     async convert (src: string, dst: string, baseDir: string) {
+        if (typeof src !== 'string') {
+            src = arguments[1];
+            dst = arguments[2];
+            baseDir = arguments[3];
+        }
+
+        if (src === dst) {
+            console.error('Can not convert shader graph to the source path.');
+            return;
+        }
+
+
         ShaderGraph.subgraphPath = baseDir;
         let content = ShaderGraph.decode(src);
         fs.ensureDirSync(path.dirname(dst))

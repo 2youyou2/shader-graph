@@ -194,6 +194,11 @@ export default class MasterNode extends ShaderNode {
         allNodes.forEach(nodes => {
             nodes.forEach(node => {
                 node.depVarings.forEach(varing => {
+                    // 
+                    if (varing === PositionSpace.AbsoluteWorld) {
+                        varing = PositionSpace.World;
+                    }
+
                     if (!depVarings.includes(varing)) {
                         depVarings.push(varing);
                     }

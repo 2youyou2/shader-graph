@@ -33,22 +33,22 @@ export default class PositionNode extends ShaderNode {
     }
 
     generateCode () {
-        let name = 'v_pos';
+        let name = 'position.xyz';
         if (this.data.m_Space === PositionSpace.Object) {
-            name = 'v_pos';
+            name = 'position.xyz';
         }
         else if (this.data.m_Space === PositionSpace.View) {
-            name = 'v_viewPos';
+            name = 'viewPosition.xyz';
         }
         else if (this.data.m_Space === PositionSpace.Tangent) {
             // name = 'v_tangentPos';
-            name = 'v_worldPos';
+            name = 'worldPosition.xyz';
         }
         else if (this.data.m_Space === PositionSpace.World) {
-            name = 'v_worldPos';
+            name = 'worldPosition.xyz';
         }
         else if (this.data.m_Space === PositionSpace.AbsoluteWorld) {
-            name = 'v_worldPos';
+            name = 'worldPosition.xyz';
         }
         return `${this.getOutputVarDefine(0)} = ${name};`;
     }

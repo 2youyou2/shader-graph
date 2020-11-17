@@ -66,23 +66,28 @@ CCProgram pbr-vs %{
     mat4 matWorld, matWorldIT;
     CCGetWorldMatrixFull(matWorld, matWorldIT);
 
+
+    v_uv = a_texCoord;
+    v_uv1 = a_texCoord1;
+    v_color = a_color;
+    
     vec4 position = In.position;
     vec3 normal = In.normal;
     vec4 tangent = In.tangent;
-    
+
     vec4 worldPosition = matWorld * position;
     vec4 viewPosition = cc_matView * worldPosition;
 
-    {{vs_varing}}
     {{vs}}
 
     position = {{slot_Vertex_Position = position}};
     normal   = {{slot_Vertex_Normal = normal}};
     tangent  = {{slot_Vertex_Tangent = tangent}};
 
-    v_uv = a_texCoord;
-    v_uv1 = a_texCoord1;
-    v_color = a_color;
+    worldPosition = matWorld * position;
+    viewPosition = cc_matView * worldPosition;
+
+    {{vs_varing}}
 
     #if USE_LIGHTMAP && HAS_SECOND_UV && !USE_BATCHING && !USE_INSTANCING
       v_luv = cc_lightingMapUVParam.xy + a_texCoord1 * cc_lightingMapUVParam.zw;

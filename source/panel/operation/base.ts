@@ -56,7 +56,7 @@ export class ShaderNode {
 
         this.uuid = this.data.m_GuidSerialized;
         this.slots = this.data.m_SerializableSlots.map(d => {
-            let slot = new ShaderSlot(d, this);
+            let slot = ShaderSlot.create(d, this);
             this.slotsMap.set(slot.id, slot);
             return slot;
         });
@@ -162,6 +162,18 @@ export enum ShaderSlotType {
 }
 
 export class ShaderSlot {
+
+    static create (obj: any, node: ShaderNode) {
+        let typeInfo = obj.typeInfo;
+        let data = getJsonObject(obj.JSONnodeData);
+
+        if (data.m_DisplayName === 'Vertex Position') {
+            return new VertexPositionSlot(typeInfo, data, node);
+        }
+
+        return new ShaderSlot(typeInfo, data, node);
+    }
+
     typeInfo = {};
     data: any = {}
 
@@ -185,9 +197,9 @@ export class ShaderSlot {
 
     type = ShaderSlotType.Input;
 
-    constructor (obj: any, node: ShaderNode) {
-        this.typeInfo = obj.typeInfo;
-        this.data = getJsonObject(obj.JSONnodeData);
+    constructor (typeInfo: any, data: any, node: ShaderNode) {
+        this.typeInfo = typeInfo;
+        this.data = data;
 
         this.type = this.data.m_SlotType as ShaderSlotType;
 
@@ -353,6 +365,18 @@ export class ShaderSlot {
         return this._concretePrecision;
     }
 }
+
+export class VertexPositionSlot extends ShaderSlot {
+    get concretePrecision () {
+        return 3;
+    }
+
+    get slotValue () {
+        let value = super.slotValue;
+        return `vec4(${value}, 1.)`;
+    }
+}
+
 
 export class ShaderEdgeSlot {
     id = 0;

@@ -84,6 +84,8 @@ CCProgram unlit-vs %{
     mat4 matWorld;
     CCGetWorldMatrix(matWorld);
 
+    v_uv = a_texCoord;
+
     {{vs}}
 
     position = {{slot_Vertex_Position = position}};
@@ -92,8 +94,6 @@ CCProgram unlit-vs %{
     vec4 viewPosition = cc_matView * worldPosition;
 
     {{vs_varing}}
-
-    v_uv = a_texCoord;
 
     return cc_matProj * viewPosition;
   }

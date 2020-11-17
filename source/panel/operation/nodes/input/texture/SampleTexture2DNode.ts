@@ -53,15 +53,15 @@ export default class SampleTexture2DNode extends InputNode {
         if (r && r.connectSlot) {
             code += `float ${r.varName} = ${rgbaVarName}.r;\n`;
         }
-        let g = this.getSlotWithSlotName('g');
+        let g = this.getSlotWithSlotName('G');
         if (g && g.connectSlot) {
             code += `float ${g.varName} = ${rgbaVarName}.g;\n`;
         }
-        let b = this.getSlotWithSlotName('b');
+        let b = this.getSlotWithSlotName('B');
         if (b && b.connectSlot) {
             code += `float ${b.varName} = ${rgbaVarName}.b;\n`;
         }
-        let a = this.getSlotWithSlotName('a');
+        let a = this.getSlotWithSlotName('A');
         if (a && a.connectSlot) {
             code += `float ${a.varName} = ${rgbaVarName}.a;\n`;
         }
