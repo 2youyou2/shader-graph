@@ -131,16 +131,23 @@ export default class MasterNode extends ShaderNode {
                 mtlValue = 'white'
             }
 
-            let editorStr = isColor ? `, editor: { type: color }` : ''
+            let editorConfigs: string[] = [];
+            if (isColor) {
+                editorConfigs.push('type: color');
+            }
+            if (p.displayName) {
+                editorConfigs.push(`displayName: ${p.displayName}`);
+            }
+            let editorStr = `, editor: { ${editorConfigs.join(', ')} }`;
 
             if (concretePrecision < TextureConcretePrecision.Texture2D) {
-                uniform += `    ${precision} ${p.name};\n`;
+                uniform += `    ${precision} ${p.referenceName};\n`;
                 blockUniformCount++;
             }
             else {
-                uniformSampler += `  uniform ${precision} ${p.name};\n`;
+                uniformSampler += `  uniform ${precision} ${p.referenceName};\n`;
             }
-            mtl += `        ${p.name}: { value: ${mtlValue} ${editorStr}}\n`
+            mtl += `        ${p.referenceName}: { value: ${mtlValue}${editorStr}}\n`
         })
 
         if (blockUniformCount === 0) {
@@ -259,7 +266,7 @@ export default class MasterNode extends ShaderNode {
                 fs_varing.push('vec4 worldPosition = vec4(v_worldPos, 1.);');
             }
             else if (varing === PositionSpace.Tangent) {
-                
+
             }
             else if (varing === NormalSpace.Object) {
                 vs_varing_define.push('out vec3 v_normal;')
@@ -280,7 +287,7 @@ export default class MasterNode extends ShaderNode {
                 fs_varing.push('vec3 worldNormal = v_worldNormal;');
             }
             else if (varing === NormalSpace.Tangent) {
-                
+
             }
             else if (varing === ViewDirectionSpace.Object) {
                 vs_varing_define.push('out vec3 v_view;')
@@ -301,13 +308,13 @@ export default class MasterNode extends ShaderNode {
                 fs_varing.push('vec3 worldView = v_worldView;');
             }
             else if (varing === ViewDirectionSpace.Tangent) {
-                
+
             }
         })
 
         code = code.replace('{{vs_varing_define}}', vs_varing_define.map(d => '  ' + d).join('\n'))
         code = code.replace('{{vs_varing}}', vs_varing.map(d => '    ' + d).join('\n'))
-        
+
         code = code.replace('{{fs_varing_define}}', fs_varing_define.map(d => '  ' + d).join('\n'))
         code = code.replace('{{fs_varing}}', fs_varing.map(d => '    ' + d).join('\n'))
 
@@ -335,9 +342,9 @@ export default class MasterNode extends ShaderNode {
         let props = this.generatePropertiesCode();
         code = code.replace('{{properties}}', props.uniform);
         code = code.replace('{{properties_sampler}}', props.uniformSampler);
-        code = code.replace('{{properties_mtl}}', props.mtl); 
+        code = code.replace('{{properties_mtl}}', props.mtl);
 
-        
+
         // old shader graph version do not have vertex slots
         let vertexSlotNames = ['Vertex Position', 'Vertex Normal', 'Vertex Tangent', 'Position'];
 
@@ -352,7 +359,7 @@ export default class MasterNode extends ShaderNode {
             else {
                 value = slot.slotValue;
             }
-            
+
             let reg = new RegExp(`{{${tempName} *=* *(.*)}}`);
             if (value === undefined) {
                 let res = reg.exec(code);
@@ -362,7 +369,7 @@ export default class MasterNode extends ShaderNode {
             }
             code = code.replace(reg, value);
         })
-        
+
         vertexSlotNames.forEach(name => {
             var tempName = `slot_${name.replace(/ /g, '_')}`;
             let value = '';

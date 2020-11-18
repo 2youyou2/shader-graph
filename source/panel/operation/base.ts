@@ -7,15 +7,20 @@ export class ShaderPropery {
     type = {};
     data: any = {}
 
-    name = '';
+    displayName = '';
+    referenceName = '';
+
+
     node: ShaderNode | null = null;
 
     constructor (obj: any) {
         this.type = obj.type;
         this.data = getJsonObject(obj.JSONnodeData);
 
-        this.name = this.data.m_Name;
-        this.name = this.name.replace(/ /g, '_');
+        this.displayName = this.data.m_Name;
+        this.displayName = this.displayName.replace(/ /g, '_');
+
+        this.referenceName = this.data.m_OverrideReferenceName || this.displayName;
     }
 
     get defaultValue () {
@@ -61,7 +66,7 @@ export class ShaderNode {
             return slot;
         });
     }
-    
+
     beforeGenreateCode () {
     }
 
@@ -212,7 +217,7 @@ export class ShaderSlot {
 
     get varName () {
         if (this.node?.isPropertyNode) {
-            return (this.node as PropertyNode).property!.name;
+            return (this.node as PropertyNode).property!.referenceName;
         }
         return 'var_' + this.globalID;
     }

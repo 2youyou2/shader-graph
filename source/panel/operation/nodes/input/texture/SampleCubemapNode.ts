@@ -39,7 +39,7 @@ export default class SampleTexture2DNode extends InputNode {
 
         let code = ''
         code += `vec3 ${R} = reflect( -normalize( ${V} ), ${N} );\n`
-        code += `${this.getOutputVarDefine(0)} = texture(${node.property?.name}, ${R});\n`
+        code += `${this.getOutputVarDefine(0)} = texture(${node.property?.referenceName}, ${R});\n`
         return code;
     }
 }
