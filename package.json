@@ -1,8 +1,8 @@
 {
   "name": "shader-graph",
   "version": "0.0.1",
+  "package_version": 2,
   "author": "youyou",
-  "debug": true,
   "contributions": {
     "menu": [
       {
