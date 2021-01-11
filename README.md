@@ -2,18 +2,18 @@
 
 **Shader Graph Tool** (Based on Cocos Creator 3D v1.1.1) can import **Unity Shader Graph** files as Cocos Creator Effect files.
 
-**Note** : **Unity Shader Graph** has more than 200 Shader Nodes, we had implemented about 100 Shader Nodes of them. Still working hard on it.  
+**Note** : **Unity Shader Graph** has more than 200 Shader Nodes, we had implemented about 100 Shader Nodes of them. Still working hard on it.
 
 # Install
 
 1. Clone to the `project/packages` folder
 
-    `cd project/packages`
+   `cd project/packages`
 
-    `git clone git@github.com:2youyou2/shader-graph.git`
+   `git clone git@github.com:2youyou2/shader-graph.git`
 
 2. `git submodule update --init`
-3. `cd packages/shader-graph`
+3. `cd extensions/shader-graph`
 4. `npm install`
 
 # Usage
@@ -22,12 +22,12 @@
 
 ![image](https://user-images.githubusercontent.com/1862402/90206720-fb00c580-de16-11ea-8f20-40989e3d6196.png)
 
-2. Add the src folder and dst folder to configuration. 
-    - The src folder should contains the *.ShaderGraph files and the relative *.ShaderSubGraph files.
-    - Shader Graph will generate the effect files to the dst folder.
+2. Add the src folder and dst folder to configuration.
+
+   - The src folder should contains the _.ShaderGraph files and the relative _.ShaderSubGraph files.
+   - Shader Graph will generate the effect files to the dst folder.
 
 3. Click **generate** button
-
 
 # Screenshots
 
