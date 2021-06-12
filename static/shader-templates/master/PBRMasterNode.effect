@@ -93,7 +93,9 @@ CCProgram pbr-vs %{
       v_luv = cc_lightingMapUVParam.xy + a_texCoord1 * cc_lightingMapUVParam.zw;
     #endif
 
-    CCPassShadowParams(worldPosition);
+    // CCPassShadowParams(worldPosition);
+    //TODO 3.1
+    CC_TRANSFER_SHADOW(worldPosition);
 
     return cc_matProj * viewPosition;
   }
@@ -106,7 +108,9 @@ CCProgram pbr-fs %{
   
   precision highp float;
   #include <cc-global>
-  #include <shading-standard>
+  // #include <shading-standard>
+  //TDDO 3.1
+  #include <standard-surface-entry>
   #include <output-standard>
   #include <gamma>
   #include <properties>
@@ -143,7 +147,9 @@ CCProgram pbr-fs %{
 
   vec4 frag () {
     StandardSurface s; surf(s);
-    vec4 color = CCStandardShading(s);
+    // vec4 color = CCStandardShading(s);
+    //TODO 3.1
+    vec4 color = CCStandardShadingBase(s,CC_SHADOW_POSITION);
 
     #if USE_LIGHTMAP && !USE_BATCHING && !USE_INSTANCING
       vec4 lighting = texture(cc_lightingMap, v_luv);
