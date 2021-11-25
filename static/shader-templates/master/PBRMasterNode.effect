@@ -74,9 +74,9 @@ CCProgram pbr-vs %{
     {{vs_varing}}
     {{vs}}
 
-    position = {{slot_Vertex_Position = position}};
-    normal   = {{slot_Vertex_Normal = normal}};
-    tangent  = {{slot_Vertex_Tangent = tangent}};
+    position.xyz = {{slot_Vertex_Position = position}}.xyz;
+    normal.xyz   = {{slot_Vertex_Normal = normal}}.xyz;
+    tangent.xyz  = {{slot_Vertex_Tangent = tangent}}.xyz;
 
     v_uv = a_texCoord;
     #if SAMPLE_FROM_RT
