@@ -4,13 +4,13 @@ CCEffect %{
   - name: opaque
     passes:
     - vert: pbr-vs:vert
-      frag: pbr-fs:frag
+      frag: pbr-fs
       properties: &props
         {{properties_mtl}}
   - name: transparent
     passes:
     - vert: pbr-vs:vert
-      frag: pbr-fs:frag
+      frag: pbr-fs
       depthStencilState: &d1
         depthTest: true
         depthWrite: false
@@ -44,6 +44,7 @@ CCProgram pbr-vs %{
   #include <cc-local-batch>
   #include <properties>
 
+  #include <cc-fog-vs>
   #include <cc-shadow-map-vs>
 
   in vec3 a_color;
@@ -52,9 +53,6 @@ CCProgram pbr-vs %{
   out vec2 v_uv;
   in vec2 a_texCoord1;
   out vec2 v_uv1;
-  #if USE_LIGHTMAP && !USE_BATCHING && !USE_INSTANCING
-    out vec2 v_luv;
-  #endif
 
   {{vs_chunks}}
   {{vs_varing_define}}
@@ -81,14 +79,27 @@ CCProgram pbr-vs %{
     tangent  = {{slot_Vertex_Tangent = tangent}};
 
     v_uv = a_texCoord;
-    v_uv1 = a_texCoord1;
-    v_color = a_color;
-
-    #if USE_LIGHTMAP && HAS_SECOND_UV && !USE_BATCHING && !USE_INSTANCING
-      v_luv = cc_lightingMapUVParam.xy + a_texCoord1 * cc_lightingMapUVParam.zw;
+    #if SAMPLE_FROM_RT
+      CC_HANDLE_RT_SAMPLE_FLIP(v_uv);
     #endif
 
-    CCPassShadowParams(worldPosition);
+    #if HAS_SECOND_UV
+      v_uv1 = a_texCoord1;
+      #if SAMPLE_FROM_RT
+        CC_HANDLE_RT_SAMPLE_FLIP(v_uv1);
+      #endif
+    #endif
+
+    #if USE_VERTEX_COLOR
+      v_color = a_color;
+    #endif
+
+    CC_TRANSFER_FOG(worldPosition);
+    CC_TRANSFER_SHADOW(worldPosition);
+
+    #if USE_LIGHTMAP && !USE_BATCHING && !CC_FORWARD_ADD
+      CCLightingMapCaclUV();
+    #endif
 
     return cc_matProj * viewPosition;
   }
@@ -101,22 +112,18 @@ CCProgram pbr-fs %{
   
   precision highp float;
   #include <cc-global>
-  #include <shading-standard>
-  #include <output-standard>
-  #include <gamma>
   #include <properties>
-  
+  #include <cc-fog-fs>
+  #include <standard-surface-entry>
+  #if USE_LIGHTMAP && !USE_BATCHING && !CC_FORWARD_ADD
+    #include <lightingmap-fs>
+  #endif
+
   {{fs_chunks}}
   {{fs_varing_define}}
 
   in vec2 v_uv;
   in vec2 v_uv1;
-
-  #if USE_LIGHTMAP
-    in vec2 v_luv;
-    #pragma builtin(local)
-    layout(binding = 30) uniform sampler2D cc_lightingMap;
-  #endif
 
   void surf (out StandardSurface s) {
     {{fs_varing}}
@@ -134,30 +141,13 @@ CCProgram pbr-fs %{
     s.metallic  = {{slot_Metallic = 0.6}};
     s.roughness = clamp(1. - {{slot_Smoothness = 0.4}}, 0.04, 1.0);
     s.occlusion = clamp({{slot_Occlusion = 1.}}, 0., 0.96);
-  }
 
-  vec4 frag () {
-    StandardSurface s; surf(s);
-    vec4 color = CCStandardShading(s);
-
-    #if USE_LIGHTMAP && !USE_BATCHING && !USE_INSTANCING
-      vec4 lighting = texture(cc_lightingMap, v_luv);
-
-      float fAmb = 0.5 - s.normal.y * 0.5;
-      vec3 ambDiff = mix(cc_ambientSky.rgb, cc_ambientGround.rgb, fAmb) * cc_ambientSky.w;
-
-      vec3 finalColor = (ambDiff.rgb * s.albedo.rgb);
-      finalColor += lighting.rgb *  s.albedo.rgb;
-      finalColor = finalColor * s.occlusion;
-      finalColor += s.emissive;
-
-      color.rgb = lighting.a * finalColor + (1.0 - lighting.a) * color.rgb;
-    #endif
-
-    #if USE_TONEMAP
-      return CCFragOutput(color);
-    #else
-      return color;
+    #if USE_LIGHTMAP && !USE_BATCHING && !CC_FORWARD_ADD
+      vec4 lightColor = texture(cc_lightingMap, v_luv.xy);
+      s.lightmap = UnpackLightingmap(lightColor);
+      s.lightmap_test = v_luv.z; /*u scale*/
     #endif
   }
+
+  CC_STANDARD_SURFACE_ENTRY()
 }%
